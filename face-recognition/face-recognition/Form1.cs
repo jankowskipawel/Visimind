@@ -44,19 +44,20 @@ namespace face_recognition
 
         private Image DetectFaces(Image img)
         {
+            //convert image to bgr
             Bitmap bitmap = new Bitmap(img);
-            Image<Bgr, byte> grayImage = new Image<Bgr, byte>(bitmap);
+            Image<Bgr, byte> bgrImg = new Image<Bgr, byte>(bitmap);
             //detect faces
-            Rectangle[] faces = faceCascadeClassifier.DetectMultiScale(grayImage, 1.1, 5);
+            Rectangle[] faces = faceCascadeClassifier.DetectMultiScale(bgrImg, 1.1, 5);
             //draw rectangles where faces were detected
             foreach (var face in faces)
             {
-                CvInvoke.Rectangle(grayImage, face, new Bgr(Color.Magenta).MCvScalar, 2);
+                CvInvoke.Rectangle(bgrImg, face, new Bgr(Color.Magenta).MCvScalar, 2);
             }
-            return grayImage.ToBitmap();
+            return bgrImg.ToBitmap();
         }
 
-        //resize and replace image
+        //resize and replace image with detected faces
         private void UpdateImage(Image img)
         {
             img = ResizeImage(img, pictureBox1.Size);
@@ -91,6 +92,7 @@ namespace face_recognition
             swapModeButton.Text = isCameraModeActive ? "Image" : "Camera";
             isCameraModeActive = !isCameraModeActive;
 
+            //swap to camera view
             if (isCameraModeActive)
             {
                 randomImageButton.Enabled = false;
@@ -99,6 +101,7 @@ namespace face_recognition
                 videoCapture.ImageGrabbed += VideoCapture_ImageGrabbed;
                 videoCapture.Start();
             }
+            //swap to image view
             else
             {
                 randomImageButton.Enabled = true;
@@ -109,6 +112,7 @@ namespace face_recognition
             }
         }
 
+        //called each frame of camera video feed
         private void VideoCapture_ImageGrabbed(object sender, EventArgs e)
         {
             Mat m = new Mat();
