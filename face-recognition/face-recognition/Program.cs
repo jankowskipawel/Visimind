@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace face_tracking
+namespace face_recognition
 {
     static class Program
     {

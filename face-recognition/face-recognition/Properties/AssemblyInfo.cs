@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("face-tracking")]
+[assembly: AssemblyTitle("face-recognition")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("face-tracking")]
+[assembly: AssemblyProduct("face-recognition")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("aeb90200-8a5a-4694-86d8-85b0e18a8df0")]
+[assembly: Guid("dd2f249f-89d8-46e5-a304-072c1136c978")]
 
 // Version information for an assembly consists of the following four values:
 //

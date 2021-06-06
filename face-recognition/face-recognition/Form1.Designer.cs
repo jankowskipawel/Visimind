@@ -1,5 +1,5 @@
 ﻿
-namespace face_tracking
+namespace face_recognition
 {
     partial class Form1
     {
@@ -29,29 +29,29 @@ namespace face_tracking
         /// </summary>
         private void InitializeComponent()
         {
-            this.getNewImageButton = new System.Windows.Forms.Button();
+            this.randomImageButton = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // getNewImageButton
+            // randomImageButton
             // 
-            this.getNewImageButton.Location = new System.Drawing.Point(12, 12);
-            this.getNewImageButton.Name = "getNewImageButton";
-            this.getNewImageButton.Size = new System.Drawing.Size(93, 23);
-            this.getNewImageButton.TabIndex = 0;
-            this.getNewImageButton.Text = "Get New Image";
-            this.getNewImageButton.UseVisualStyleBackColor = true;
-            this.getNewImageButton.Click += new System.EventHandler(this.getNewImageButton_Click);
+            this.randomImageButton.Location = new System.Drawing.Point(13, 13);
+            this.randomImageButton.Name = "randomImageButton";
+            this.randomImageButton.Size = new System.Drawing.Size(97, 23);
+            this.randomImageButton.TabIndex = 0;
+            this.randomImageButton.Text = "Random Image";
+            this.randomImageButton.UseVisualStyleBackColor = true;
+            this.randomImageButton.Click += new System.EventHandler(this.randomImageButton_Click);
             // 
             // pictureBox1
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.Location = new System.Drawing.Point(12, 41);
+            this.pictureBox1.Location = new System.Drawing.Point(12, 42);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(848, 574);
+            this.pictureBox1.Size = new System.Drawing.Size(776, 396);
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
             // 
@@ -59,11 +59,11 @@ namespace face_tracking
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(872, 627);
+            this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.getNewImageButton);
+            this.Controls.Add(this.randomImageButton);
             this.Name = "Form1";
-            this.Text = "Face Recogniton";
+            this.Text = "Face Recognition";
             this.Resize += new System.EventHandler(this.Form1_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
@@ -72,7 +72,7 @@ namespace face_tracking
 
         #endregion
 
-        private System.Windows.Forms.Button getNewImageButton;
+        private System.Windows.Forms.Button randomImageButton;
         private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

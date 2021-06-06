@@ -10,10 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Emgu.CV;
-using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 
-namespace face_tracking
+namespace face_recognition
 {
     public partial class Form1 : Form
     {
@@ -32,13 +31,12 @@ namespace face_tracking
         private static MemoryStream ms = new MemoryStream(bytes);
         private System.Drawing.Image img = System.Drawing.Image.FromStream(ms);
 
-        private void getNewImageButton_Click(object sender, EventArgs e)
+        private void randomImageButton_Click(object sender, EventArgs e)
         {
             //download new image
             bytes = wc.DownloadData("https://thispersondoesnotexist.com/image");
             ms = new MemoryStream(bytes);
             img = System.Drawing.Image.FromStream(ms);
-            //resize and replace
             UpdateImage(img);
         }
 
@@ -56,6 +54,7 @@ namespace face_tracking
             return grayImage.ToBitmap();
         }
 
+        //resize and replace image
         private void UpdateImage(Image img)
         {
             img = ResizeImage(img, pictureBox1.Size);
