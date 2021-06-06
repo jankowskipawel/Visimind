@@ -53,7 +53,7 @@ namespace face_recognition
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Location = new System.Drawing.Point(12, 42);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(484, 461);
+            this.pictureBox1.Size = new System.Drawing.Size(583, 507);
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
             // 
@@ -75,10 +75,11 @@ namespace face_recognition
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(508, 515);
+            this.ClientSize = new System.Drawing.Size(607, 561);
             this.Controls.Add(this.customImageButton);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.randomImageButton);
+            this.MaximumSize = new System.Drawing.Size(900, 900);
             this.Name = "Form1";
             this.Text = "Face Recognition";
             this.Resize += new System.EventHandler(this.Form1_Resize);

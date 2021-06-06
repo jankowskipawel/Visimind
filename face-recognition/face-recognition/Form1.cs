@@ -49,7 +49,7 @@ namespace face_recognition
             //draw rectangles where faces were detected
             foreach (var face in faces)
             {
-                CvInvoke.Rectangle(grayImage, face, new Bgr(Color.Red).MCvScalar, 2);
+                CvInvoke.Rectangle(grayImage, face, new Bgr(Color.Magenta).MCvScalar, 2);
             }
             return grayImage.ToBitmap();
         }
