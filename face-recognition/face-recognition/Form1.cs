@@ -30,6 +30,8 @@ namespace face_recognition
         private static byte[] bytes = wc.DownloadData("https://thispersondoesnotexist.com/image");
         private static MemoryStream ms = new MemoryStream(bytes);
         private System.Drawing.Image img = System.Drawing.Image.FromStream(ms);
+        private bool isCameraModeActive = false;
+        private Capture videoCapture;
 
         private void randomImageButton_Click(object sender, EventArgs e)
         {
@@ -68,7 +70,10 @@ namespace face_recognition
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            UpdateImage(img);
+            if (!isCameraModeActive)
+            {
+                UpdateImage(img);
+            }
         }
 
         private void customImageButton_Click(object sender, EventArgs e)
@@ -79,6 +84,37 @@ namespace face_recognition
                 img = Image.FromFile(openFileDialog1.FileName);
                 UpdateImage(img);
             }
+        }
+
+        private void swapModeButton_Click(object sender, EventArgs e)
+        {
+            swapModeButton.Text = isCameraModeActive ? "Image" : "Camera";
+            isCameraModeActive = !isCameraModeActive;
+
+            if (isCameraModeActive)
+            {
+                randomImageButton.Enabled = false;
+                customImageButton.Enabled = false;
+                videoCapture = new Emgu.CV.Capture(0);
+                videoCapture.ImageGrabbed += VideoCapture_ImageGrabbed;
+                videoCapture.Start();
+            }
+            else
+            {
+                randomImageButton.Enabled = true;
+                customImageButton.Enabled = true;
+                videoCapture.Stop();
+                videoCapture = null;
+                UpdateImage(img);
+            }
+        }
+
+        private void VideoCapture_ImageGrabbed(object sender, EventArgs e)
+        {
+            Mat m = new Mat();
+            videoCapture.Retrieve(m);
+            img = m.ToImage<Bgr, byte>().Bitmap;
+            UpdateImage(img);
         }
     }
 }
