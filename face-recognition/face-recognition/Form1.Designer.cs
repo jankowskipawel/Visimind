@@ -93,6 +93,7 @@ namespace face_recognition
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.randomImageButton);
             this.MaximumSize = new System.Drawing.Size(1200, 900);
+            this.MinimumSize = new System.Drawing.Size(100, 100);
             this.Name = "Form1";
             this.Text = "Face Recognition";
             this.Resize += new System.EventHandler(this.Form1_Resize);
