@@ -31,6 +31,8 @@ namespace face_recognition
         {
             this.randomImageButton = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.customImageButton = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -51,15 +53,30 @@ namespace face_recognition
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Location = new System.Drawing.Point(12, 42);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(776, 396);
+            this.pictureBox1.Size = new System.Drawing.Size(484, 461);
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
+            // 
+            // customImageButton
+            // 
+            this.customImageButton.Location = new System.Drawing.Point(117, 13);
+            this.customImageButton.Name = "customImageButton";
+            this.customImageButton.Size = new System.Drawing.Size(101, 23);
+            this.customImageButton.TabIndex = 2;
+            this.customImageButton.Text = "Custom Image...";
+            this.customImageButton.UseVisualStyleBackColor = true;
+            this.customImageButton.Click += new System.EventHandler(this.customImageButton_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(508, 515);
+            this.Controls.Add(this.customImageButton);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.randomImageButton);
             this.Name = "Form1";
@@ -74,6 +91,8 @@ namespace face_recognition
 
         private System.Windows.Forms.Button randomImageButton;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button customImageButton;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

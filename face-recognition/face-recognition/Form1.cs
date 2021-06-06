@@ -70,5 +70,15 @@ namespace face_recognition
         {
             UpdateImage(img);
         }
+
+        private void customImageButton_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
+            if (openFileDialog1.FileName != "openFileDialog1")
+            {
+                img = Image.FromFile(openFileDialog1.FileName);
+                UpdateImage(img);
+            }
+        }
     }
 }
