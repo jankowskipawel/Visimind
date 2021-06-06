@@ -63,7 +63,8 @@ namespace face_tracking
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.getNewImageButton);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Face Recogniton";
+            this.Resize += new System.EventHandler(this.Form1_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 

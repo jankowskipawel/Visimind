@@ -20,8 +20,7 @@ namespace face_tracking
         public Form1()
         {
             InitializeComponent();
-            img = ResizeImage(img, pictureBox1.Size);
-            pictureBox1.Image = DetectFaces(img);
+            UpdateImage(img);
         }
 
         //initialize classifier
@@ -40,8 +39,7 @@ namespace face_tracking
             ms = new MemoryStream(bytes);
             img = System.Drawing.Image.FromStream(ms);
             //resize and replace
-            img = ResizeImage(img, pictureBox1.Size);
-            pictureBox1.Image = DetectFaces(img);
+            UpdateImage(img);
         }
 
         private Image DetectFaces(Image img)
@@ -58,9 +56,20 @@ namespace face_tracking
             return grayImage.ToBitmap();
         }
 
+        private void UpdateImage(Image img)
+        {
+            img = ResizeImage(img, pictureBox1.Size);
+            pictureBox1.Image = DetectFaces(img);
+        }
+
         public static Image ResizeImage(Image imgToResize, Size size)
         {
             return (Image)(new Bitmap(imgToResize, size));
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            UpdateImage(img);
         }
     }
 }
