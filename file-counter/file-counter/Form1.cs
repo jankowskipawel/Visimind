@@ -35,15 +35,32 @@ namespace file_counter
         {
             //parse parameter
             int MAX_DIFF = Int32.Parse(parameterTextBox.Text.Trim());
-
             //get all directories from directory
             string[] directories = Directory.GetDirectories(directoryTextBox.Text);
-
             //remove non camera directories
             List<string> filteredDirectories = FilterDirectories(directories);
-
+            //count files
+            int[] numberOfFilesInDirectories = new int[filteredDirectories.Count];
+            for (int i = 0; i < filteredDirectories.Count; i++)
+            {
+                numberOfFilesInDirectories[i] = Directory.GetFiles(filteredDirectories[i]).Length;
+            }
+            //check file count difference
+            bool[] isMaxDiffExceded = new bool[numberOfFilesInDirectories.Length];
+            for (int i = 0; i < numberOfFilesInDirectories.Length; i++)
+            {
+                for (int j = 0; j < numberOfFilesInDirectories.Length; j++)
+                {
+                    if (Math.Abs(numberOfFilesInDirectories[i] - numberOfFilesInDirectories[j]) > MAX_DIFF)
+                    {
+                        isMaxDiffExceded[i] = true;
+                        isMaxDiffExceded[j] = true;
+                    }
+                }
+            }
         }
 
+        //checks every directory name using regex and returns list with only matching names
         private List<string> FilterDirectories(string[] directories)
         {
             List<string> filteredDirectories = new List<string>();
