@@ -76,8 +76,6 @@ namespace file_counter
                 }
             }
             PrintColoredText("", Color.Black, true);
-            //save log
-            
         }
 
         //checks every directory name using regex and returns list with only matching names
@@ -106,6 +104,16 @@ namespace file_counter
             {
                 logTextBox.AppendText(Environment.NewLine);
             }
+        }
+
+        private void clearLogButton_Click(object sender, EventArgs e)
+        {
+            logTextBox.Text = "";
+        }
+
+        private void saveLogButton_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

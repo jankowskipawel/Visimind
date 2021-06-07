@@ -41,11 +41,13 @@ namespace file_counter
             this.logTextBox = new System.Windows.Forms.RichTextBox();
             this.directoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.logFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.saveLogButton = new System.Windows.Forms.Button();
+            this.clearLogButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // checkDirectoryButton
             // 
-            this.checkDirectoryButton.Location = new System.Drawing.Point(190, 100);
+            this.checkDirectoryButton.Location = new System.Drawing.Point(15, 100);
             this.checkDirectoryButton.Name = "checkDirectoryButton";
             this.checkDirectoryButton.Size = new System.Drawing.Size(102, 23);
             this.checkDirectoryButton.TabIndex = 0;
@@ -131,11 +133,34 @@ namespace file_counter
             this.logTextBox.TabIndex = 9;
             this.logTextBox.Text = "";
             // 
+            // saveLogButton
+            // 
+            this.saveLogButton.Location = new System.Drawing.Point(123, 100);
+            this.saveLogButton.Name = "saveLogButton";
+            this.saveLogButton.Size = new System.Drawing.Size(102, 23);
+            this.saveLogButton.TabIndex = 10;
+            this.saveLogButton.Text = "Save Log To File";
+            this.saveLogButton.UseVisualStyleBackColor = true;
+            this.saveLogButton.Click += new System.EventHandler(this.saveLogButton_Click);
+            // 
+            // clearLogButton
+            // 
+            this.clearLogButton.ForeColor = System.Drawing.Color.Red;
+            this.clearLogButton.Location = new System.Drawing.Point(421, 101);
+            this.clearLogButton.Name = "clearLogButton";
+            this.clearLogButton.Size = new System.Drawing.Size(75, 23);
+            this.clearLogButton.TabIndex = 11;
+            this.clearLogButton.Text = "Clear Log";
+            this.clearLogButton.UseVisualStyleBackColor = true;
+            this.clearLogButton.Click += new System.EventHandler(this.clearLogButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(508, 565);
+            this.Controls.Add(this.clearLogButton);
+            this.Controls.Add(this.saveLogButton);
             this.Controls.Add(this.logTextBox);
             this.Controls.Add(this.pickLogDirectoryButton);
             this.Controls.Add(this.parameterTextBox);
@@ -167,6 +192,8 @@ namespace file_counter
         private System.Windows.Forms.RichTextBox logTextBox;
         private System.Windows.Forms.FolderBrowserDialog directoryFolderBrowserDialog;
         private System.Windows.Forms.FolderBrowserDialog logFolderBrowserDialog;
+        private System.Windows.Forms.Button saveLogButton;
+        private System.Windows.Forms.Button clearLogButton;
     }
 }
 
