@@ -36,7 +36,7 @@ namespace file_counter
             this.label2 = new System.Windows.Forms.Label();
             this.logDirectoryTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.parameterTextBox = new System.Windows.Forms.TextBox();
             this.pickLogDirectoryButton = new System.Windows.Forms.Button();
             this.logTextBox = new System.Windows.Forms.RichTextBox();
             this.directoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
@@ -51,6 +51,7 @@ namespace file_counter
             this.checkDirectoryButton.TabIndex = 0;
             this.checkDirectoryButton.Text = "Check directory";
             this.checkDirectoryButton.UseVisualStyleBackColor = true;
+            this.checkDirectoryButton.Click += new System.EventHandler(this.checkDirectoryButton_Click);
             // 
             // directoryTextBox
             // 
@@ -103,12 +104,13 @@ namespace file_counter
             this.label3.TabIndex = 6;
             this.label3.Text = "Parameter:";
             // 
-            // textBox3
+            // parameterTextBox
             // 
-            this.textBox3.Location = new System.Drawing.Point(426, 74);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(70, 20);
-            this.textBox3.TabIndex = 7;
+            this.parameterTextBox.Location = new System.Drawing.Point(426, 74);
+            this.parameterTextBox.Name = "parameterTextBox";
+            this.parameterTextBox.Size = new System.Drawing.Size(70, 20);
+            this.parameterTextBox.TabIndex = 7;
+            this.parameterTextBox.Text = "5";
             // 
             // pickLogDirectoryButton
             // 
@@ -136,7 +138,7 @@ namespace file_counter
             this.ClientSize = new System.Drawing.Size(508, 565);
             this.Controls.Add(this.logTextBox);
             this.Controls.Add(this.pickLogDirectoryButton);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.parameterTextBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.logDirectoryTextBox);
             this.Controls.Add(this.label2);
@@ -160,7 +162,7 @@ namespace file_counter
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox logDirectoryTextBox;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox parameterTextBox;
         private System.Windows.Forms.Button pickLogDirectoryButton;
         private System.Windows.Forms.RichTextBox logTextBox;
         private System.Windows.Forms.FolderBrowserDialog directoryFolderBrowserDialog;
