@@ -62,6 +62,7 @@ namespace file_counter
             }
 
             //print info
+            PrintColoredText($"MAX_DIFF: {MAX_DIFF}", Color.Green, true);
             for (int i = 0; i < numberOfFilesInDirectories.Length; i++)
             {
                 string cameraNumber = filteredDirectories[i].Split('\\').Last().Split(' ').Last();
@@ -76,6 +77,7 @@ namespace file_counter
             }
             PrintColoredText("", Color.Black, true);
             //save log
+            
         }
 
         //checks every directory name using regex and returns list with only matching names
