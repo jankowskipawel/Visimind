@@ -86,9 +86,9 @@ namespace file_counter
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 57);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(68, 13);
+            this.label2.Size = new System.Drawing.Size(107, 13);
             this.label2.TabIndex = 4;
-            this.label2.Text = "Log file path:";
+            this.label2.Text = "Save log to directory:";
             // 
             // logDirectoryTextBox
             // 

@@ -113,7 +113,12 @@ namespace file_counter
 
         private void saveLogButton_Click(object sender, EventArgs e)
         {
-
+            DateTime date = DateTime.Now;
+            string directoryName = directoryTextBox.Text.Split('\\').Last();
+            StreamWriter sw =
+                new StreamWriter($"{logDirectoryTextBox.Text}\\{directoryName}_{date.ToString("yyyyMMdd_hhmmss")}.txt");
+            sw.Write(logTextBox.Text);
+            sw.Close();
         }
     }
 }
