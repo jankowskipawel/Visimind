@@ -16,5 +16,17 @@ namespace file_counter
         {
             InitializeComponent();
         }
+
+        private void pickDirectoryButton_Click(object sender, EventArgs e)
+        {
+            directoryFolderBrowserDialog.ShowDialog();
+            directoryTextBox.Text = directoryFolderBrowserDialog.SelectedPath;
+        }
+
+        private void pickLogDirectoryButton_Click(object sender, EventArgs e)
+        {
+            logFolderBrowserDialog.ShowDialog();
+            logDirectoryTextBox.Text = logFolderBrowserDialog.SelectedPath;
+        }
     }
 }
