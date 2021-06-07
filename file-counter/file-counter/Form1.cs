@@ -39,12 +39,14 @@ namespace file_counter
             string[] directories = Directory.GetDirectories(directoryTextBox.Text);
             //remove non camera directories
             List<string> filteredDirectories = FilterDirectories(directories);
+
             //count files
             int[] numberOfFilesInDirectories = new int[filteredDirectories.Count];
             for (int i = 0; i < filteredDirectories.Count; i++)
             {
                 numberOfFilesInDirectories[i] = Directory.GetFiles(filteredDirectories[i]).Length;
             }
+
             //check file count difference
             bool[] isMaxDiffExceded = new bool[numberOfFilesInDirectories.Length];
             for (int i = 0; i < numberOfFilesInDirectories.Length; i++)
@@ -58,6 +60,22 @@ namespace file_counter
                     }
                 }
             }
+
+            //print info
+            for (int i = 0; i < numberOfFilesInDirectories.Length; i++)
+            {
+                string cameraNumber = filteredDirectories[i].Split('\\').Last().Split(' ').Last();
+                if (isMaxDiffExceded[i] == true)
+                {
+                    PrintColoredText($"Camera {cameraNumber}: {numberOfFilesInDirectories[i]} files", Color.Red, true);
+                }
+                else
+                {
+                    PrintColoredText($"Camera {cameraNumber}: {numberOfFilesInDirectories[i]} files", Color.Black, true);
+                }
+            }
+            PrintColoredText("", Color.Black, true);
+            //save log
         }
 
         //checks every directory name using regex and returns list with only matching names
@@ -75,6 +93,17 @@ namespace file_counter
                 }
             }
             return filteredDirectories;
+        }
+
+        //prints colored text to log
+        public void PrintColoredText(string text, Color color, bool addNewLine=false)
+        {
+            logTextBox.SelectionColor = color;
+            logTextBox.AppendText(text);
+            if (addNewLine)
+            {
+                logTextBox.AppendText(Environment.NewLine);
+            }
         }
     }
 }
