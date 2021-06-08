@@ -23,6 +23,7 @@ namespace file_counter
         {
             directoryFolderBrowserDialog.ShowDialog();
             directoryTextBox.Text = directoryFolderBrowserDialog.SelectedPath;
+            logDirectoryTextBox.Text = directoryFolderBrowserDialog.SelectedPath;
         }
 
         private void pickLogDirectoryButton_Click(object sender, EventArgs e)
@@ -33,6 +34,17 @@ namespace file_counter
 
         private void checkDirectoryButton_Click(object sender, EventArgs e)
         {
+            if(directoryTextBox.TextLength==0)
+            {
+                MessageBox.Show("Please enter the directory location");
+                return;
+            }
+
+            if (parameterTextBox.TextLength == 0)
+            {
+                MessageBox.Show("Please enter the parameter");
+                return;
+            }
             //parse parameter
             int MAX_DIFF = Int32.Parse(parameterTextBox.Text.Trim());
             //get all directories from directory
@@ -113,6 +125,11 @@ namespace file_counter
 
         private void saveLogButton_Click(object sender, EventArgs e)
         {
+            if (logDirectoryTextBox.TextLength == 0)
+            {
+                MessageBox.Show("Please enter the log save target directory");
+                return;
+            }
             DateTime date = DateTime.Now;
             string directoryName = directoryTextBox.Text.Split('\\').Last();
             StreamWriter sw =
