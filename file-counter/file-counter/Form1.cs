@@ -45,8 +45,18 @@ namespace file_counter
                 MessageBox.Show("Please enter the parameter");
                 return;
             }
+            if(!Directory.Exists(directoryTextBox.Text) || !IsPathValid(directoryTextBox.Text))
+            {
+                MessageBox.Show($"{directoryTextBox.Text} is not a valid directory");
+                return;
+            }
             //parse parameter
-            int MAX_DIFF = Int32.Parse(parameterTextBox.Text.Trim());
+            if (!Int32.TryParse(parameterTextBox.Text.Trim(), out var MAX_DIFF))
+            {
+                MessageBox.Show($"{parameterTextBox.Text} is not a valid parameter");
+                return;
+            }
+            
             //get all directories from directory
             string[] directories = Directory.GetDirectories(directoryTextBox.Text);
             //remove non camera directories
@@ -136,6 +146,12 @@ namespace file_counter
                 new StreamWriter($"{logDirectoryTextBox.Text}\\{directoryName}_{date.ToString("yyyyMMdd_hhmmss")}.txt");
             sw.Write(logTextBox.Text);
             sw.Close();
+        }
+
+        public static bool IsPathValid(string filePath)
+        {
+            HashSet<char> _invalidCharacters = new HashSet<char>(Path.GetInvalidPathChars());
+            return !string.IsNullOrEmpty(filePath) && !filePath.Any(pc => _invalidCharacters.Contains(pc));
         }
     }
 }
