@@ -40,7 +40,7 @@ namespace file_counter
             }
             if (!Int32.TryParse(parameterString.Trim(), out var parsedParameter))
             {
-                throw new ArgumentException($"Can't parse {parameterTextBox.Text} as int");
+                throw new ArgumentException($"Can't parse {parameterString} as int");
             }
             return parsedParameter;
         }
