@@ -32,31 +32,56 @@ namespace file_counter
             logDirectoryTextBox.Text = logFolderBrowserDialog.SelectedPath;
         }
 
-        private void checkDirectoryButton_Click(object sender, EventArgs e)
+        public int ParseParameter(string parameterString)
         {
-            if(directoryTextBox.TextLength==0)
+            if (parameterString.Length == 0)
             {
-                MessageBox.Show("Please enter the directory location");
-                return;
+                throw new ArgumentException("Parameter cannot be empty");
+            }
+            if (!Int32.TryParse(parameterString.Trim(), out var parsedParameter))
+            {
+                throw new ArgumentException($"Can't parse {parameterTextBox.Text} as int");
+            }
+            return parsedParameter;
+        }
+
+        public void CheckDirectoryPath(string path)
+        {
+            if (path.Length == 0)
+            {
+                throw new ArgumentException("Directory path cannot be empty");
             }
 
-            if (parameterTextBox.TextLength == 0)
+            if (!Directory.Exists(path) || !IsPathValid(path))
             {
-                MessageBox.Show("Please enter the parameter");
-                return;
+                throw new ArgumentException($"{path} is not a valid directory");
             }
-            if(!Directory.Exists(directoryTextBox.Text) || !IsPathValid(directoryTextBox.Text))
+        }
+
+        private void checkDirectoryButton_Click(object sender, EventArgs e)
+        {
+            try
             {
-                MessageBox.Show($"{directoryTextBox.Text} is not a valid directory");
-                return;
+                CheckDirectoryPath(directoryTextBox.Text);
             }
-            //parse parameter
-            if (!Int32.TryParse(parameterTextBox.Text.Trim(), out var MAX_DIFF))
+            catch (Exception exception)
             {
-                MessageBox.Show($"{parameterTextBox.Text} is not a valid parameter");
+                MessageBox.Show(exception.Message);
                 return;
             }
             
+            // parse parameter
+            int MAX_DIFF;
+            try
+            {
+                MAX_DIFF = ParseParameter(parameterTextBox.Text);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+                return;
+            }
+
             //get all directories from directory
             string[] directories = Directory.GetDirectories(directoryTextBox.Text);
             //remove non camera directories
@@ -70,25 +95,24 @@ namespace file_counter
             }
 
             //check file count difference
-            bool[] isMaxDiffExceded = new bool[numberOfFilesInDirectories.Length];
+            bool[] isMaxDiffExceeded = new bool[numberOfFilesInDirectories.Length];
             for (int i = 0; i < numberOfFilesInDirectories.Length; i++)
             {
                 for (int j = 0; j < numberOfFilesInDirectories.Length; j++)
                 {
                     if (Math.Abs(numberOfFilesInDirectories[i] - numberOfFilesInDirectories[j]) > MAX_DIFF)
                     {
-                        isMaxDiffExceded[i] = true;
-                        isMaxDiffExceded[j] = true;
+                        isMaxDiffExceeded[i] = true;
+                        isMaxDiffExceeded[j] = true;
                     }
                 }
             }
-
             //print info
             PrintColoredText($"MAX_DIFF: {MAX_DIFF}", Color.Green, true);
             for (int i = 0; i < numberOfFilesInDirectories.Length; i++)
             {
                 string cameraNumber = filteredDirectories[i].Split('\\').Last().Split(' ').Last();
-                if (isMaxDiffExceded[i] == true)
+                if (isMaxDiffExceeded[i] == true)
                 {
                     PrintColoredText($"Camera {cameraNumber}: {numberOfFilesInDirectories[i]} files", Color.Red, true);
                 }
@@ -135,14 +159,13 @@ namespace file_counter
 
         private void saveLogButton_Click(object sender, EventArgs e)
         {
-            if (logDirectoryTextBox.TextLength == 0)
+            try
             {
-                MessageBox.Show("Please enter the log save target directory");
-                return;
+                CheckDirectoryPath(logDirectoryTextBox.Text);
             }
-            if (!Directory.Exists(logDirectoryTextBox.Text) || !IsPathValid(logDirectoryTextBox.Text))
+            catch (Exception exception)
             {
-                MessageBox.Show($"{logDirectoryTextBox.Text} is not a valid directory");
+                MessageBox.Show(exception.Message);
                 return;
             }
             DateTime date = DateTime.Now;
