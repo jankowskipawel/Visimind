@@ -140,6 +140,11 @@ namespace file_counter
                 MessageBox.Show("Please enter the log save target directory");
                 return;
             }
+            if (!Directory.Exists(logDirectoryTextBox.Text) || !IsPathValid(logDirectoryTextBox.Text))
+            {
+                MessageBox.Show($"{logDirectoryTextBox.Text} is not a valid directory");
+                return;
+            }
             DateTime date = DateTime.Now;
             string directoryName = directoryTextBox.Text.Split('\\').Last();
             StreamWriter sw =
