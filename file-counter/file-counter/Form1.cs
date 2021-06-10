@@ -32,7 +32,7 @@ namespace file_counter
             logDirectoryTextBox.Text = logFolderBrowserDialog.SelectedPath;
         }
 
-        public int ParseParameter(string parameterString)
+        public static int ParseParameter(string parameterString)
         {
             if (parameterString.Length == 0)
             {
@@ -45,7 +45,7 @@ namespace file_counter
             return parsedParameter;
         }
 
-        public void CheckDirectoryPath(string path)
+        public static void CheckDirectoryPath(string path)
         {
             if (path.Length == 0)
             {
