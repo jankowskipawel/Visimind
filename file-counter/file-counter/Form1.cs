@@ -50,6 +50,11 @@ namespace file_counter
                 MessageBox.Show($"{directoryTextBox.Text} is not a valid directory");
                 return;
             }
+            if (!Directory.Exists(logDirectoryTextBox.Text) || !IsPathValid(logDirectoryTextBox.Text))
+            {
+                MessageBox.Show($"{logDirectoryTextBox.Text} is not a valid directory");
+                return;
+            }
             //parse parameter
             if (!Int32.TryParse(parameterTextBox.Text.Trim(), out var MAX_DIFF))
             {
