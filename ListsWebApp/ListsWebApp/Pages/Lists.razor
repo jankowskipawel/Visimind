@@ -1,0 +1,46 @@
+﻿@page "/lists"
+
+@using DataLibrary
+@using Microsoft.Extensions.Configuration
+@using ListsWebApp.Models
+@inject IDataAccess _data
+@inject IConfiguration _config
+
+<h3>Lists</h3>
+
+<ul>
+    @foreach (var listItem in listItems)
+    {
+        <li>
+            <input type="checkbox" @bind="listItem.IsDone"/>
+            <input @bind="listItem.Title" />
+        </li>
+    }
+</ul>
+
+<input placeholder="Item name..." @bind="newItem"/>
+<button @onclick="AddItemToList">Add item</button>
+
+@code {
+    List<ListItem> listItemstmp;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string sql = "select * from listitems";
+        listItemstmp = await _data.LoadData<ListItem, dynamic>(sql, new {}, _config.GetConnectionString("default"));
+    }
+
+
+
+    private List<ListItem> listItems = new();
+    private string newItem;
+
+    private void AddItemToList()
+    {
+        if (!string.IsNullOrWhiteSpace(newItem))
+        {
+            listItems.Add(new ListItem(){Title = newItem });
+            newItem = string.Empty;
+        }
+    }
+}
