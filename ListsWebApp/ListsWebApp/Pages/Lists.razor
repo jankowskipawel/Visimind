@@ -8,39 +8,62 @@
 
 <h3>Lists</h3>
 
-<ul>
-    @foreach (var listItem in listItems)
-    {
-        <li>
-            <input type="checkbox" @bind="listItem.IsDone"/>
-            <input @bind="listItem.Title" />
-        </li>
-    }
-</ul>
+@if (listItems == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <ul>
+        @foreach (var listItem in listItems)
+        {
+            <li>
+                <input type="checkbox" @bind="listItem.IsDone"/>
+                <input @bind="listItem.Title" />
+            </li>
+        }
+    </ul>
+}
+
 
 <input placeholder="Item name..." @bind="newItem"/>
-<button @onclick="AddItemToList">Add item</button>
-
+<button class="btn btn-primary" @onclick="SaveData">Add item</button>
+<button class="btn btn-warning" @onclick="UpdateData">Save</button>
+<button class="btn btn-danger" @onclick="DeleteData">Delete</button>
 @code {
-    List<ListItem> listItemstmp;
+    private string newItem;
+    List<ListItem> listItems;
 
     protected override async Task OnInitializedAsync()
     {
         string sql = "select * from listitems";
-        listItemstmp = await _data.LoadData<ListItem, dynamic>(sql, new {}, _config.GetConnectionString("default"));
+        listItems = await _data.LoadData<ListItem, dynamic>(sql, new {}, _config.GetConnectionString("default"));
     }
 
+    private async Task UpdateData()
+    {
+        string sql = "update listitems set title = 'xd' where id = '5'";
+        await _data.SaveData(sql, new {Title = newItem, ListId = 1, IsDone = 0}, _config.GetConnectionString("default"));
 
+        await OnInitializedAsync();
+    }
 
-    private List<ListItem> listItems = new();
-    private string newItem;
-
-    private void AddItemToList()
+    private async Task SaveData()
     {
         if (!string.IsNullOrWhiteSpace(newItem))
         {
-            listItems.Add(new ListItem(){Title = newItem });
+            string sql = "insert into listitems (title, listid, isDone) values (@Title, @ListId, @IsDone);";
+            await _data.SaveData(sql, new {Title = newItem, ListId = 1, IsDone = 0}, _config.GetConnectionString("default"));
             newItem = string.Empty;
+            await OnInitializedAsync();
         }
+    }
+
+    private async Task DeleteData()
+    {
+        string sql = "delete from listitems where id = '1'";
+        await _data.SaveData(sql, new { Title = newItem, ListId = 1, IsDone = 0 }, _config.GetConnectionString("default"));
+
+        await OnInitializedAsync();
     }
 }
