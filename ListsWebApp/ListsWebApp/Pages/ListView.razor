@@ -18,7 +18,7 @@ else
         @foreach (var listItem in listItems)
         {
             <li>
-                <input type="checkbox" @bind="listItem.IsDone" />
+                <input type="checkbox"checked="@listItem.IsDone" @onchange="() => UpdateCheckbox(listItem.Id, Convert.ToInt32(!listItem.IsDone))"/>
                 <input @bind="listItem.Title" />
                 <button class="btn btn-danger" @onclick="() => DeleteData(listItem.Id)">X</button>
             </li>
@@ -28,7 +28,7 @@ else
 
 
 <input placeholder="Item name..." @bind="newItem" />
-<button class="btn btn-primary" @onclick="SaveData">Add item</button>
+<button class="btn btn-primary" @onclick="AddItem">Add item</button>
 <button class="btn btn-warning" @onclick="UpdateData">Save</button>
 @code {
     [Parameter]
@@ -50,7 +50,15 @@ else
         await OnInitializedAsync();
     }
 
-    private async Task SaveData()
+    private async Task UpdateCheckbox(int id, int isDone)
+    {
+        string sql = $"update listitems set isDone = '{isDone}' where id = '{id}'";
+        await _data.SaveData(sql, new { }, _config.GetConnectionString("default"));
+
+        await OnInitializedAsync();
+    }
+
+    private async Task AddItem()
     {
         if (!string.IsNullOrWhiteSpace(newItem))
         {
