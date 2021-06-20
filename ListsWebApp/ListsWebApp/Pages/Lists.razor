@@ -17,10 +17,11 @@ else
     <ul>
         @foreach (var listItem in listItems)
         {
-            <li>
-                <input type="checkbox" @bind="listItem.IsDone"/>
-                <input @bind="listItem.Title" />
-            </li>
+        <li>
+            <input type="checkbox" @bind="listItem.IsDone" />
+            <input @bind="listItem.Title" />
+            <button class="btn btn-danger" @onclick="() => DeleteData(listItem.Id)">X</button>
+        </li>
         }
     </ul>
 }
@@ -29,7 +30,6 @@ else
 <input placeholder="Item name..." @bind="newItem"/>
 <button class="btn btn-primary" @onclick="SaveData">Add item</button>
 <button class="btn btn-warning" @onclick="UpdateData">Save</button>
-<button class="btn btn-danger" @onclick="DeleteData">Delete</button>
 @code {
     private string newItem;
     List<ListItem> listItems;
@@ -59,9 +59,9 @@ else
         }
     }
 
-    private async Task DeleteData()
+    private async Task DeleteData(int id)
     {
-        string sql = "delete from listitems where id = '1'";
+        string sql = $"delete from listitems where id = '{id}'";
         await _data.SaveData(sql, new { Title = newItem, ListId = 1, IsDone = 0 }, _config.GetConnectionString("default"));
 
         await OnInitializedAsync();
