@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ListsWebApp", "ListsWebApp\ListsWebApp.csproj", "{73FB049A-779D-4809-ABBD-2C8CE6810978}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLibrary", "DataLibrary\DataLibrary.csproj", "{DB28E801-7F5E-4636-BD7C-33E90F947437}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLibrary", "DataLibrary\DataLibrary.csproj", "{DB28E801-7F5E-4636-BD7C-33E90F947437}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,55 +5,56 @@
 @using ListsWebApp.Models
 @inject IDataAccess _data
 @inject IConfiguration _config
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
 
 <h3>Lists</h3>
 
-@if (listItems == null)
+@if (lists == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
     <ul>
-        @foreach (var listItem in listItems)
+        @foreach (var list in lists)
         {
-        <li>
-            <input type="checkbox" @bind="listItem.IsDone" />
-            <input @bind="listItem.Title" />
-            <button class="btn btn-danger" @onclick="() => DeleteData(listItem.Id)">X</button>
-        </li>
+            <li>
+                <button @onclick="() => SelectList(list.Id)">@list.Name</button>
+                <button class="btn btn-danger" @onclick="() => DeleteData(list.Id)">X</button>
+            </li>
         }
     </ul>
 }
 
+<input placeholder="Item name..." @bind="newItem" />
+<button class="btn btn-primary" @onclick="AddList">Add list</button>
 
-<input placeholder="Item name..." @bind="newItem"/>
-<button class="btn btn-primary" @onclick="SaveData">Add item</button>
-<button class="btn btn-warning" @onclick="UpdateData">Save</button>
+
 @code {
     private string newItem;
-    List<ListItem> listItems;
+    List<ListWA> lists;
 
     protected override async Task OnInitializedAsync()
     {
-        string sql = "select * from listitems";
-        listItems = await _data.LoadData<ListItem, dynamic>(sql, new {}, _config.GetConnectionString("default"));
+        string sql = "select * from lists";
+        lists = await _data.LoadData<ListWA, dynamic>(sql, new { }, _config.GetConnectionString("default"));
     }
 
     private async Task UpdateData()
     {
         string sql = "update listitems set title = 'xd' where id = '5'";
-        await _data.SaveData(sql, new {Title = newItem, ListId = 1, IsDone = 0}, _config.GetConnectionString("default"));
+        await _data.SaveData(sql, new { Title = newItem, ListId = 1, IsDone = 0 }, _config.GetConnectionString("default"));
 
         await OnInitializedAsync();
     }
 
-    private async Task SaveData()
+    private async Task AddList()
     {
         if (!string.IsNullOrWhiteSpace(newItem))
         {
-            string sql = "insert into listitems (title, listid, isDone) values (@Title, @ListId, @IsDone);";
-            await _data.SaveData(sql, new {Title = newItem, ListId = 1, IsDone = 0}, _config.GetConnectionString("default"));
+            string sql = "insert into lists (userid, name) values (@UserId, @Name);";
+            await _data.SaveData(sql, new { UserId = 1, Name = newItem }, _config.GetConnectionString("default"));
             newItem = string.Empty;
             await OnInitializedAsync();
         }
@@ -61,9 +62,17 @@ else
 
     private async Task DeleteData(int id)
     {
-        string sql = $"delete from listitems where id = '{id}'";
+        string sql = $"delete from listitems where listid = '{id}'";
+        await _data.SaveData(sql, new { Title = newItem, ListId = 1, IsDone = 0 }, _config.GetConnectionString("default"));
+        sql = $"delete from lists where id = '{id}'";
         await _data.SaveData(sql, new { Title = newItem, ListId = 1, IsDone = 0 }, _config.GetConnectionString("default"));
 
+
         await OnInitializedAsync();
+    }
+
+    private void SelectList(int id)
+    {
+        navigationManager.NavigateTo($"/listView/{id}");
     }
 }
