@@ -17,7 +17,7 @@
 
 @if (loginState.IsLoggedIn)
 {
-    <h3>ListView</h3>
+    <h3>@listName</h3>
 
     @if (listItems == null)
     {
@@ -32,13 +32,13 @@
                 <input type="checkbox" checked="@listItem.IsDone" @onchange="() => UpdateCheckbox(listItem.Id, Convert.ToInt32(!listItem.IsDone))" />
                 @if (listItem.Title.StartsWith($"{env.WebRootPath}\\img"))
                 {
-                    <img style="max-height:500px;max-width:500px;" src="\img\@listItem.Title.Split("\\").Last()" />
+                    <img class="ml-3" style="max-height:500px;max-width:500px;" src="\img\@listItem.Title.Split("\\").Last()" />
                 }
                 else
                 {
-                    <la>@listItem.Title</la>
+                    <la class="ml-3">@listItem.Title</la>
                 }
-                <button class="btn btn-danger" @onclick="() => DeleteItem(listItem.Id)">X</button>
+                <button class="btn btn-danger py-0 px-1 ml-2" @onclick="() => DeleteItem(listItem.Id)">x</button>
                                                                                        </li>
             }
         </ul>
@@ -46,14 +46,13 @@
 
     <input placeholder="Item name..." @bind="newItem" />
     <button class="btn btn-primary" @onclick="AddItem">Add item</button>
-    <form @onsubmit="SingleUpload">
+    <form class="mt-5" @onsubmit="SingleUpload">
         <InputFile OnChange="OnInputFileChange" />
         <br /><br />
-        <button type="submit">Add image</button>
+        <button class="btn btn-primary" type="submit">Add image</button>
     </form>
 
-
-    <h3>Share list</h3>
+    <h3 class="mt-5">Share list</h3>
     <input placeholder="Username..." @bind="usernameToShare" />
     <button class="btn btn-primary" @onclick="ShareList">Share List</button>
 
@@ -72,12 +71,17 @@ else
     private string usernameToShare;
     IBrowserFile file;
     string filePath;
+    List<ListWA> listNames;
+    string listName;
 
 
     protected override async Task OnInitializedAsync()
     {
         string sql = $"select * from listitems where listid = '{listid}'";
         listItems = await _data.LoadData<ListItem, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+        sql = $"select * from lists where id = '{listid}'";
+        listNames = await _data.LoadData<ListWA, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+        listName = listNames[0].Name;
     }
 
     private async Task UpdateCheckbox(int id, int isDone)

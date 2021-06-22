@@ -23,7 +23,7 @@
             {
                 <li>
                     <button @onclick="() => SelectList(list.Id)">@list.Name</button>
-                    <button class="btn btn-danger" @onclick="() => DeleteData(list.Id)">X</button>
+                    <button class="btn btn-danger py-0 px-1 ml-2" @onclick="() => DeleteData(list.Id)">x</button>
                 </li>
             }
         </ul>
@@ -32,13 +32,13 @@
     <input placeholder="List name..." @bind="newItem" />
     <button class="btn btn-primary" @onclick="AddList">Add list</button>
 
-    <h3>Shared Lists</h3>
+    <h3 class="mt-5">Shared Lists</h3>
     <ul>
         @foreach (var list in sharedLists)
         {
             <li>
                 <button @onclick="() => SelectList(list.Id)">@list.Name</button>
-                <button class="btn btn-danger" @onclick="() => DeleteData(list.Id)">X</button>
+                <button class="btn btn-danger py-0 px-1 ml-2" @onclick="() => DeleteData(list.Id)">x</button>
             </li>
         }
     </ul>
