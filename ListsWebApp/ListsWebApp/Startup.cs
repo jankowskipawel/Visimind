@@ -31,6 +31,7 @@ namespace ListsWebApp
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<IDataAccess, DataAccess>();
+            services.AddScoped<LoginState>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

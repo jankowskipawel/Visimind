@@ -6,29 +6,37 @@
 @inject IDataAccess _data
 @inject IConfiguration _config
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+@inject Data.LoginState loginState;
 
-
-<h3>Lists</h3>
-
-@if (lists == null)
+@if (loginState.IsLoggedIn)
 {
-    <p><em>Loading...</em></p>
+    <h3>Lists</h3>
+
+    @if (lists == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var list in lists)
+            {
+                <li>
+                    <button @onclick="() => SelectList(list.Id)">@list.Name</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteData(list.Id)">X</button>
+                </li>
+            }
+        </ul>
+    }
+
+    <input placeholder="Item name..." @bind="newItem" />
+    <button class="btn btn-primary" @onclick="AddList">Add list</button>
+
 }
 else
 {
-    <ul>
-        @foreach (var list in lists)
-        {
-            <li>
-                <button @onclick="() => SelectList(list.Id)">@list.Name</button>
-                <button class="btn btn-danger" @onclick="() => DeleteData(list.Id)">X</button>
-            </li>
-        }
-    </ul>
+    <h3>Please log in first</h3>
 }
-
-<input placeholder="Item name..." @bind="newItem" />
-<button class="btn btn-primary" @onclick="AddList">Add list</button>
 
 
 @code {
@@ -37,7 +45,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        string sql = "select * from lists";
+        string sql = $"select * from lists where userid = '{loginState.userId}'";
         lists = await _data.LoadData<ListWA, dynamic>(sql, new { }, _config.GetConnectionString("default"));
     }
 
