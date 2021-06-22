@@ -10,7 +10,7 @@
 
 @if (loginState.IsLoggedIn)
 {
-    <h3>Lists</h3>
+    <h3>Your Lists</h3>
 
     @if (lists == null)
     {
@@ -32,6 +32,16 @@
     <input placeholder="List name..." @bind="newItem" />
     <button class="btn btn-primary" @onclick="AddList">Add list</button>
 
+    <h3>Shared Lists</h3>
+    <ul>
+        @foreach (var list in sharedLists)
+        {
+            <li>
+                <button @onclick="() => SelectList(list.Id)">@list.Name</button>
+                <button class="btn btn-danger" @onclick="() => DeleteData(list.Id)">X</button>
+            </li>
+        }
+    </ul>
 }
 else
 {
@@ -42,11 +52,25 @@ else
 @code {
     private string newItem;
     List<ListWA> lists;
+    List<ListWA> sharedLists;
+    List<SharedList> sharedListsIDs;
+
 
     protected override async Task OnInitializedAsync()
     {
         string sql = $"select * from lists where userid = '{loginState.userId}'";
         lists = await _data.LoadData<ListWA, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+        //get shared lists ids
+        sql = $"select * from sharedlists where userid = '{loginState.userId}'";
+        sharedListsIDs = await _data.LoadData<SharedList, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+        List<int> listIDsToShow = new List<int>();
+        foreach (var listIDs in sharedListsIDs)
+        {
+            listIDsToShow.Add(listIDs.ListId);
+        }
+        //get lists
+        sql = $"select * from lists where id in ('{String.Join(',', listIDsToShow)}');";
+        sharedLists = await _data.LoadData<ListWA, dynamic>(sql, new { }, _config.GetConnectionString("default"));
     }
 
     private async Task UpdateData()
