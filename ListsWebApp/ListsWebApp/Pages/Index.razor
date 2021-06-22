@@ -1,7 +1,18 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+@inject Data.LoginState loginState;
 
-Welcome to your new app.
+@if (loginState.IsLoggedIn)
+{
+    <h1>Hello, @loginState.username</h1>
+    <p>Use navigation bar to go to your lists</p>
+}
+else
+{
+    <h1>Hello, Guest</h1>
+    <p>Use navigation bar to log in or register new account</p>
+}
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+
+
