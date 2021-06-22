@@ -1,0 +1,51 @@
+﻿@page "/register"
+@using DataLibrary
+@using ListsWebApp.Models
+@using Microsoft.Extensions.Configuration
+@inject Data.LoginState loginState;
+@inject IDataAccess _data
+@inject IConfiguration _config
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+
+@if (!loginState.IsLoggedIn)
+{
+    <h3>Register</h3>
+    <div style="text-align:center">
+        <label>Username </label>
+        <input id="UserName: " name="UserName" type="text" @bind-value="username" />
+    </div>
+    <div style=" text-align:center">
+        <label>Password </label>
+        <input id="Password" name="Password" type="password" @bind-value="password" />
+    </div>
+    <div style="text-align:center">
+        <button type="submit" @onclick=@RegisterAccount>
+            Register
+        </button>
+    </div>
+}
+else
+{
+    <h3>Log out to make new account</h3>
+}
+
+
+@code {
+    string username = "";
+    string password = "";
+    List<User> users;
+
+
+    async Task RegisterAccount()
+    {
+        //check for users with the same login
+        string sql = $"select * from users where login = '{username}'";
+        users = await _data.LoadData<User, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+        if (users.Count == 0)
+        {
+            sql = $"insert into users (login, password) values (@Username, @Password);";
+            await _data.SaveData(sql, new {Username = username, Password = password }, _config.GetConnectionString("default"));
+            navigationManager.NavigateTo("/login");
+        }
+    }
+}

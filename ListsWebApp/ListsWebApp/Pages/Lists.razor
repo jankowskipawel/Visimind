@@ -62,7 +62,7 @@ else
         if (!string.IsNullOrWhiteSpace(newItem))
         {
             string sql = "insert into lists (userid, name) values (@UserId, @Name);";
-            await _data.SaveData(sql, new { UserId = 1, Name = newItem }, _config.GetConnectionString("default"));
+            await _data.SaveData(sql, new { UserId = loginState.userId, Name = newItem }, _config.GetConnectionString("default"));
             newItem = string.Empty;
             await OnInitializedAsync();
         }
