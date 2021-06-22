@@ -2,10 +2,13 @@
 @using DataLibrary
 @using ListsWebApp.Models
 @using Microsoft.Extensions.Configuration
+@using System.ComponentModel.DataAnnotations
 @inject Data.LoginState loginState;
 @inject IDataAccess _data
 @inject IConfiguration _config
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+@inject IJSRuntime JsRuntime;
+
 
 
 <h3>Login</h3>
@@ -40,6 +43,11 @@
         {
             loginState.SetLogin(true, username, users[0].Id);
             navigationManager.NavigateTo("/lists");
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Wrong username or password");
+
         }
     }
 

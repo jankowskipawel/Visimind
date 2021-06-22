@@ -6,17 +6,20 @@
 @inject IDataAccess _data
 @inject IConfiguration _config
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+@inject IJSRuntime JsRuntime;
+
 
 @if (!loginState.IsLoggedIn)
 {
     <h3>Register</h3>
     <div style="text-align:center">
         <label>Username </label>
-        <input id="UserName: " name="UserName" type="text" @bind-value="username" />
+        <input id="UserName: " name="UserName" type="text" required @bind-value="username" />
+        <span class="text-danger" asp-validation-for></span>
     </div>
     <div style=" text-align:center">
         <label>Password </label>
-        <input id="Password" name="Password" type="password" @bind-value="password" />
+        <input id="Password" name="Password" type="password" required @bind-value="password" />
     </div>
     <div style="text-align:center">
         <button type="submit" @onclick=@RegisterAccount>
@@ -38,14 +41,26 @@ else
 
     async Task RegisterAccount()
     {
-        //check for users with the same login
-        string sql = $"select * from users where login = '{username}'";
-        users = await _data.LoadData<User, dynamic>(sql, new { }, _config.GetConnectionString("default"));
-        if (users.Count == 0)
+        if (username.Length > 2 && password.Length > 4)
         {
-            sql = $"insert into users (login, password) values (@Username, @Password);";
-            await _data.SaveData(sql, new {Username = username, Password = password }, _config.GetConnectionString("default"));
-            navigationManager.NavigateTo("/login");
+            //check for users with the same login
+            string sql = $"select * from users where login = '{username}'";
+            users = await _data.LoadData<User, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+            if (users.Count == 0)
+            {
+                sql = $"insert into users (login, password) values (@Username, @Password);";
+                await _data.SaveData(sql, new { Username = username, Password = password }, _config.GetConnectionString("default"));
+                navigationManager.NavigateTo("/login");
+            }
+            else
+            {
+                await JsRuntime.InvokeVoidAsync("alert", "User already exists");
+
+            }
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Username must be at least 3 characters long and password at least 5 characters long");
         }
     }
 }
