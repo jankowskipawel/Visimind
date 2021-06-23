@@ -1,16 +1,21 @@
 ﻿@page "/lists"
 
 @using DataLibrary
+@using ListsWebApp.Data
 @using Microsoft.Extensions.Configuration
 @using ListsWebApp.Models
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject IDataAccess _data
 @inject IConfiguration _config
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 @inject Data.LoginState loginState;
+@inject ProtectedLocalStorage browserStorage
+
 
 @if (loginState.IsLoggedIn)
 {
-    <h3>Your Lists</h3>
+    <h3 class="d-inline">Your Lists</h3>
+    <button class="btn btn-primary d-inline ml-4" @onclick="()=>OnInitializedAsync()">Refresh</button>
 
     @if (lists == null)
     {
@@ -58,19 +63,22 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        string sql = $"select * from lists where userid = '{loginState.userId}'";
-        lists = await _data.LoadData<ListWA, dynamic>(sql, new { }, _config.GetConnectionString("default"));
-        //get shared lists ids
-        sql = $"select * from sharedlists where userid = '{loginState.userId}'";
-        sharedListsIDs = await _data.LoadData<SharedList, dynamic>(sql, new { }, _config.GetConnectionString("default"));
-        List<int> listIDsToShow = new List<int>();
-        foreach (var listIDs in sharedListsIDs)
+        if (loginState.IsLoggedIn)
         {
-            listIDsToShow.Add(listIDs.ListId);
+            string sql = $"select * from lists where userid = '{loginState.userId}'";
+            lists = await _data.LoadData<ListWA, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+            //get shared lists ids
+            sql = $"select * from sharedlists where userid = '{loginState.userId}'";
+            sharedListsIDs = await _data.LoadData<SharedList, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+            List<int> listIDsToShow = new List<int>();
+            foreach (var listIDs in sharedListsIDs)
+            {
+                listIDsToShow.Add(listIDs.ListId);
+            }
+            //get lists
+            sql = $"select * from lists where id in ({String.Join(", ", listIDsToShow)});";
+            sharedLists = await _data.LoadData<ListWA, dynamic>(sql, new { }, _config.GetConnectionString("default"));
         }
-        //get lists
-        sql = $"select * from lists where id in ({String.Join(", ", listIDsToShow)});";
-        sharedLists = await _data.LoadData<ListWA, dynamic>(sql, new { }, _config.GetConnectionString("default"));
     }
 
     private async Task AddList()

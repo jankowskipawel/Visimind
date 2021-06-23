@@ -20,9 +20,18 @@ namespace ListsWebApp.Data
             NotifyStateChanged();
         }
 
+        public void SetLogin(LoginState ls)
+        {
+            IsLoggedIn = ls.IsLoggedIn;
+            username = ls.username;
+            userId = ls.userId;
+            NotifyStateChanged();
+        }
+
         private void NotifyStateChanged()
         {
             OnChange?.Invoke();
         }
+
     }
 }

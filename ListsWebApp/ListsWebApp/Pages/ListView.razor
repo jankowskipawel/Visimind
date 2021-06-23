@@ -7,17 +7,22 @@
 @using System.Net
 @using System.Xml.Linq
 @using System.Collections.Specialized
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Microsoft.AspNetCore.Hosting
 @inject IDataAccess _data
 @inject IConfiguration _config
 @inject Data.LoginState loginState;
 @inject IJSRuntime JsRuntime;
 @inject IWebHostEnvironment env
+@inject ProtectedLocalStorage browserStorage
+
 
 
 @if (loginState.IsLoggedIn)
 {
-    <h3>@listName</h3>
+    <h3 class="d-inline">@listName</h3>
+    <button class="btn btn-primary d-inline ml-4" @onclick="()=>OnInitializedAsync()">Refresh</button>
+
 
     @if (listItems == null)
     {
@@ -29,17 +34,17 @@
             @foreach (var listItem in listItems)
             {
                 <li>
-                <input type="checkbox" checked="@listItem.IsDone" @onchange="() => UpdateCheckbox(listItem.Id, Convert.ToInt32(!listItem.IsDone))" />
-                @if (listItem.Title.StartsWith($"{env.WebRootPath}\\img"))
-                {
-                    <img class="ml-3" style="max-height:500px;max-width:500px;" src="\img\@listItem.Title.Split("\\").Last()" />
-                }
-                else
-                {
-                    <la class="ml-3">@listItem.Title</la>
-                }
-                <button class="btn btn-danger py-0 px-1 ml-2" @onclick="() => DeleteItem(listItem.Id)">x</button>
-                                                                                       </li>
+                    <input type="checkbox" checked="@listItem.IsDone" @onchange="() => UpdateCheckbox(listItem.Id, Convert.ToInt32(!listItem.IsDone))" />
+                    @if (listItem.Title.StartsWith($"{env.WebRootPath}\\img"))
+                    {
+                        <img class="ml-3" style="max-height:500px;max-width:500px;" src="\img\@listItem.Title.Split("\\").Last()" />
+                    }
+                    else
+                    {
+                        <la class="ml-3">@listItem.Title</la>
+                    }
+                    <button class="btn btn-danger py-0 px-1 ml-2" @onclick="() => DeleteItem(listItem.Id)">x</button>
+                </li>
             }
         </ul>
     }
@@ -170,7 +175,7 @@ else
         if (fileExtension == "png" || fileExtension == "jpg" || fileExtension == "jpeg" || fileExtension == "gif")
         {
             //do something with bytes
-            Stream stream = file.OpenReadStream(maxAllowedSize:10000000);
+            Stream stream = file.OpenReadStream(maxAllowedSize: 10000000);
             DateTime date = DateTime.Now;
             filePath = $"{env.WebRootPath}\\img\\{date.ToString("yyyyMMdd_hhmmss")}{file.Name}";
             FileStream fs = File.Create(filePath);

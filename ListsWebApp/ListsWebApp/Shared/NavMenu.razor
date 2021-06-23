@@ -1,5 +1,9 @@
-﻿@inject Data.LoginState loginState;
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using ListsWebApp.Data
+@inject Data.LoginState loginState;
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+@inject ProtectedLocalStorage browserStorage
+
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">ListsWebApp</a>
@@ -55,10 +59,11 @@
         collapseNavMenu = !collapseNavMenu;
     }
 
-    void HandleLogout()
+    async Task HandleLogout()
     {
+        await browserStorage.DeleteAsync("acc");
         loginState.SetLogin(false, "", -1);
-        navigationManager.NavigateTo("/");
+        navigationManager.NavigateTo("/login");
     }
 
     protected override void OnInitialized()

@@ -3,11 +3,15 @@
 @using ListsWebApp.Models
 @using Microsoft.Extensions.Configuration
 @using System.ComponentModel.DataAnnotations
+@using System.Text.Json.Serialization
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject Data.LoginState loginState;
 @inject IDataAccess _data
 @inject IConfiguration _config
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 @inject IJSRuntime JsRuntime;
+@inject ProtectedLocalStorage browserStorage
+
 
 
 
@@ -42,7 +46,10 @@
         if (users.Count == 1)
         {
             loginState.SetLogin(true, username, users[0].Id);
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(loginState);
+            await browserStorage.SetAsync("acc", json);
             navigationManager.NavigateTo("/lists");
+
         }
         else
         {
