@@ -27,7 +27,7 @@
             @foreach (var list in lists)
             {
                 <li>
-                    <button @onclick="() => SelectList(list.Id)">@list.Name</button>
+                    <button class="btn btn-outline-dark mt-1" @onclick="() => SelectList(list.Id)">@list.Name</button>
                     <button class="btn btn-danger py-0 px-1 ml-2" @onclick="() => DeleteData(list.Id)">x</button>
                 </li>
             }
@@ -42,7 +42,7 @@
         @foreach (var list in sharedLists)
         {
             <li>
-                <button @onclick="() => SelectList(list.Id)">@list.Name</button>
+                <button class="btn btn-outline-dark mt-1" @onclick="() => SelectList(list.Id)">@list.Name</button>
                 <button class="btn btn-danger py-0 px-1 ml-2" @onclick="() => DeleteData(list.Id)">x</button>
             </li>
         }

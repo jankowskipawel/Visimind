@@ -23,7 +23,6 @@
     <h3 class="d-inline">@listName</h3>
     <button class="btn btn-primary d-inline ml-4" @onclick="()=>OnInitializedAsync()">Refresh</button>
 
-
     @if (listItems == null)
     {
         <p><em>Loading...</em></p>
@@ -33,33 +32,45 @@
         <ul>
             @foreach (var listItem in listItems)
             {
-                <li>
+                <li class="mt-3">
                     <input type="checkbox" checked="@listItem.IsDone" @onchange="() => UpdateCheckbox(listItem.Id, Convert.ToInt32(!listItem.IsDone))" />
                     @if (listItem.Title.StartsWith($"{env.WebRootPath}\\img"))
                     {
                         <img class="ml-3" style="max-height:500px;max-width:500px;" src="\img\@listItem.Title.Split("\\").Last()" />
+                        <button class="btn btn-danger py-0 px-1 ml-2" @onclick="() => DeleteItem(listItem.Id)">x</button>
+                        <div style="margin-left: 200px;" class="d-block mt-2">
+                        <button type="button" class="btn btn-outline-success" @onclick="() => AddReaction(listItem.Id, true)">Yes</button>
+                        @if (imageReactions.ContainsKey(@listItem.Id))
+                        {
+                            <p class="d-inline mx-1">@imageReactions[@listItem.Id]</p>
+                        }
+                        else
+                        {
+                            <p class="d-inline mx-1">0</p>
+                        }
+                            <button type="button" class="btn btn-outline-danger" @onclick="() => AddReaction(listItem.Id, false)">No</button>
+                        </div>
                     }
                     else
                     {
                         <la class="ml-3">@listItem.Title</la>
+                        <button class="btn btn-danger py-0 px-1 ml-2" @onclick="() => DeleteItem(listItem.Id)">x</button>
                     }
-                    <button class="btn btn-danger py-0 px-1 ml-2" @onclick="() => DeleteItem(listItem.Id)">x</button>
                 </li>
             }
         </ul>
     }
 
-    <input placeholder="Item name..." @bind="newItem" />
-    <button class="btn btn-primary" @onclick="AddItem">Add item</button>
+    <input style="width: 303px;" placeholder="Item name..." @bind="newItem" />
+    <button style="width: 103px;" class="btn btn-primary" @onclick="AddItem">Add item</button>
     <form class="mt-5" @onsubmit="SingleUpload">
         <InputFile OnChange="OnInputFileChange" />
-        <br /><br />
-        <button class="btn btn-primary" type="submit">Add image</button>
+        <button style="width: 103px;" class="btn btn-primary" type="submit">Add image</button>
     </form>
 
     <h3 class="mt-5">Share list</h3>
-    <input placeholder="Username..." @bind="usernameToShare" />
-    <button class="btn btn-primary" @onclick="ShareList">Share List</button>
+    <input style="width: 303px;" placeholder="Username..." @bind="usernameToShare" />
+    <button style="width: 103px;" class="btn btn-primary" @onclick="ShareList">Share List</button>
 
 
 }
@@ -78,6 +89,8 @@ else
     string filePath;
     List<ListWA> listNames;
     string listName;
+    List<ImageReaction> allImageReactions;
+    Dictionary<int, int> imageReactions;
 
 
     protected override async Task OnInitializedAsync()
@@ -87,6 +100,68 @@ else
         sql = $"select * from lists where id = '{listid}'";
         listNames = await _data.LoadData<ListWA, dynamic>(sql, new { }, _config.GetConnectionString("default"));
         listName = listNames[0].Name;
+        sql = $"select * from imagereactions where listid = '{listid}'";
+        allImageReactions = await _data.LoadData<ImageReaction, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+        imageReactions = CountReactions(allImageReactions);
+    }
+
+    async Task AddReaction(int itemId, bool isPositive)
+    {
+        if (DidUserAlreadyVote(loginState.userId, itemId))
+        {
+            List<ImageReaction> previousVote;
+            string sql = $"select * from imagereactions where listItemId = '{itemId}' and givenByUserId = '{loginState.userId}'";
+            previousVote = await _data.LoadData<ImageReaction, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+            //if ispositive is not equal to prevoius vote
+            if (isPositive != previousVote[0].IsPositive)
+            {
+                sql = $"update imagereactions set isPositive = '{Convert.ToInt32(isPositive)}' where listItemId = '{itemId}' and givenByUserId = '{loginState.userId}'";
+                await _data.SaveData(sql, new {  }, _config.GetConnectionString("default"));
+            }
+            else
+            {
+                sql = $"delete from imagereactions where listItemId = '{itemId}' and givenByUserId = '{loginState.userId}'";
+                await _data.SaveData(sql, new { }, _config.GetConnectionString("default"));
+            }
+        }
+        else
+        {
+            string sql = $"insert into imagereactions (givenByUserId, listItemId, isPositive, listid) values (@givenByUserId, @listItemId, @IsPositive, @Listid)";
+            await _data.SaveData(sql, new { givenByUserId = loginState.userId, listItemId = itemId, IsPositive = isPositive , Listid = listid}, _config.GetConnectionString("default"));
+
+        }
+        await OnInitializedAsync();
+    }
+
+    private bool DidUserAlreadyVote(int userId, int itemId)
+    {
+        foreach (var reaction in allImageReactions)
+        {
+            if (reaction.ListItemId == itemId && reaction.GivenByUserId == userId)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    Dictionary<int, int> CountReactions(List<ImageReaction> imageReactions)
+    {
+        Dictionary<int, int> result = new Dictionary<int, int>();
+        foreach (var ir in imageReactions)
+        {
+            if (ir.IsPositive)
+            {
+                result.TryGetValue(ir.ListItemId, out var count);
+                result[ir.ListItemId] = count + 1;
+            }
+            else
+            {
+                result.TryGetValue(ir.ListItemId, out var count);
+                result[ir.ListItemId] = count - 1;
+            }
+        }
+        return result;
     }
 
     private async Task UpdateCheckbox(int id, int isDone)
@@ -171,25 +246,28 @@ else
 
     private async void SingleUpload()
     {
-        string fileExtension = file.Name.Split(".").Last();
-        if (fileExtension == "png" || fileExtension == "jpg" || fileExtension == "jpeg" || fileExtension == "gif")
+        if (file != null)
         {
-            //do something with bytes
-            Stream stream = file.OpenReadStream(maxAllowedSize: 10000000);
-            DateTime date = DateTime.Now;
-            filePath = $"{env.WebRootPath}\\img\\{date.ToString("yyyyMMdd_hhmmss")}{file.Name}";
-            FileStream fs = File.Create(filePath);
-            await stream.CopyToAsync(fs);
-            stream.Close();
-            fs.Close();
-            await AddImage(filePath);
-        }
-        else
-        {
-            await JsRuntime.InvokeVoidAsync("alert", "Unsupported file type (supported file types: png, jpg, gif)");
+            string fileExtension = file.Name.Split(".").Last();
+            if (fileExtension == "png" || fileExtension == "jpg" || fileExtension == "jpeg" || fileExtension == "gif")
+            {
+                //do something with bytes
+                Stream stream = file.OpenReadStream(maxAllowedSize: 10000000);
+                DateTime date = DateTime.Now;
+                filePath = $"{env.WebRootPath}\\img\\{date.ToString("yyyyMMdd_hhmmss")}{file.Name}";
+                FileStream fs = File.Create(filePath);
+                await stream.CopyToAsync(fs);
+                stream.Close();
+                fs.Close();
+                await AddImage(filePath);
+            }
+            else
+            {
+                await JsRuntime.InvokeVoidAsync("alert", "Unsupported file type (supported file types: png, jpg, gif)");
 
+            }
+            this.StateHasChanged();
         }
-        this.StateHasChanged();
 
 
     }
