@@ -63,6 +63,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var savedAcc = await browserStorage.GetAsync<string>("acc");
+        string json = savedAcc.Success ? savedAcc.Value : "";
+        if (json != "")
+        {
+            LoginState ls = Newtonsoft.Json.JsonConvert.DeserializeObject<LoginState>(savedAcc.Value);
+            loginState.SetLogin(ls);
+        }
         if (loginState.IsLoggedIn)
         {
             string sql = $"select * from lists where userid = '{loginState.userId}'";

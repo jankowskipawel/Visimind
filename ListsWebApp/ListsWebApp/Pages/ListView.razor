@@ -7,6 +7,7 @@
 @using System.Net
 @using System.Xml.Linq
 @using System.Collections.Specialized
+@using ListsWebApp.Data
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Microsoft.AspNetCore.Hosting
 @inject IDataAccess _data
@@ -95,6 +96,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var savedAcc = await browserStorage.GetAsync<string>("acc");
+        string json = savedAcc.Success ? savedAcc.Value : "";
+        if (json != "")
+        {
+            LoginState ls = Newtonsoft.Json.JsonConvert.DeserializeObject<LoginState>(savedAcc.Value);
+            loginState.SetLogin(ls);
+        }
         string sql = $"select * from listitems where listid = '{listid}'";
         listItems = await _data.LoadData<ListItem, dynamic>(sql, new { }, _config.GetConnectionString("default"));
         sql = $"select * from lists where id = '{listid}'";
