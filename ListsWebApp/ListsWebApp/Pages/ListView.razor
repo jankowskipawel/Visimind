@@ -61,17 +61,22 @@
             }
         </ul>
     }
-
-    <input style="width: 303px;" placeholder="Item name..." @bind="newItem" />
-    <button style="width: 103px;" class="btn btn-primary" @onclick="AddItem">Add item</button>
+    <form @onsubmit="AddItem">
+        <input style="width: 303px;" placeholder="Item name..." @bind="newItem" />
+        <button style="width: 103px;" class="btn btn-primary" type="submit">Add item</button>
+    </form>
+    
     <form class="mt-5" @onsubmit="SingleUpload">
         <InputFile OnChange="OnInputFileChange" />
         <button style="width: 103px;" class="btn btn-primary" type="submit">Add image</button>
     </form>
 
     <h3 class="mt-5">Share list</h3>
-    <input style="width: 303px;" placeholder="Username..." @bind="usernameToShare" />
-    <button style="width: 103px;" class="btn btn-primary" @onclick="ShareList">Share List</button>
+    <form @onsubmit="ShareList">
+        <input style="width: 303px;" placeholder="Username..." @bind="usernameToShare" />
+        <button style="width: 103px;" class="btn btn-primary" type="submit">Share List</button>
+    </form>
+    
 
 
 }
@@ -218,6 +223,8 @@ else
             {
                 sql = $"insert into sharedlists (userid, listid) values (@UserId, @ListId);";
                 await _data.SaveData(sql, new { UserId = users[0].Id, ListId = listid }, _config.GetConnectionString("default"));
+                await JsRuntime.InvokeVoidAsync("alert", $"List shared with {usernameToShare}");
+
             }
             else
             {

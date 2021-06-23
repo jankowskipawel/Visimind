@@ -33,9 +33,10 @@
             }
         </ul>
     }
-
-    <input placeholder="List name..." @bind="newItem" />
-    <button class="btn btn-primary" @onclick="AddList">Add list</button>
+    <form @onsubmit="AddList">
+        <input placeholder="List name..." @bind="newItem" />
+        <button class="btn btn-primary" type="submit">Add list</button>
+    </form>
 
     <h3 class="mt-5">Shared Lists</h3>
     <ul>
