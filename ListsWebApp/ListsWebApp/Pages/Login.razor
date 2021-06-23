@@ -19,19 +19,21 @@
 
 @if (!loginState.IsLoggedIn)
 {
-    <div style="text-align:center">
-        <label>Username </label>
-        <input id="UserName: " name="UserName" type="text" @bind-value="username" />
-    </div>
-    <div style=" text-align:center">
-        <label>Password </label>
-        <input id="Password" name="Password" type="password" @bind-value="password" />
-    </div>
-    <div style="text-align:center">
-        <button type="submit" @onclick=@HandleLogin>
-            Submit
-        </button>
-    </div>
+    <form @onsubmit="@HandleLogin">
+        <div style="text-align:center">
+            <label>Username </label>
+            <input id="UserName: " name="UserName" type="text" @bind-value="username" />
+        </div>
+        <div style=" text-align:center">
+            <label>Password </label>
+            <input id="Password" name="Password" type="password" @bind-value="password" />
+        </div>
+        <div style="text-align:center">
+            <button type="submit">
+                Submit
+            </button>
+        </div>
+    </form>
 }
 
 @code {

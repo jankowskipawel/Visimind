@@ -12,25 +12,28 @@
 @if (!loginState.IsLoggedIn)
 {
     <h3>Register</h3>
-    <div style="text-align:center">
-        <label>Username </label>
-        <input id="UserName: " name="UserName" type="text" required @bind-value="username" />
-        <span class="text-danger" asp-validation-for></span>
-    </div>
-    <div style=" text-align:center">
-        <label>Password </label>
-        <input id="Password" name="Password" type="password" required @bind-value="password" />
-    </div>
-    <div style="text-align:center">
-        <button type="submit" @onclick=@RegisterAccount>
-            Register
-        </button>
-    </div>
+    <form @onsubmit="@RegisterAccount">
+        <div style="text-align:center">
+            <label>Username </label>
+            <input id="UserName: " name="UserName" type="text" required @bind-value="username" />
+            <span class="text-danger" asp-validation-for></span>
+        </div>
+        <div style=" text-align:center">
+            <label>Password </label>
+            <input id="Password" name="Password" type="password" required @bind-value="password" />
+        </div>
+        <div style="text-align:center">
+            <button type="submit">
+                Register
+            </button>
+        </div>
+    </form>
 }
 else
 {
     <h3>Log out to make new account</h3>
 }
+        
 
 
 @code {
