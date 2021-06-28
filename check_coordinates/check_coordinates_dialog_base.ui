@@ -81,7 +81,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Check</string>
+    <string>Search</string>
    </property>
   </widget>
   <widget class="QTextEdit" name="textEdit">
