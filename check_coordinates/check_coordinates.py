@@ -38,7 +38,6 @@ import os.path
 
 class CheckCoordinates:
     """QGIS Plugin Implementation."""
-
     def __init__(self, iface):
         """Constructor.
 
@@ -70,6 +69,7 @@ class CheckCoordinates:
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
         self.first_start = None
+        self.extent_list = []
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -182,16 +182,13 @@ class CheckCoordinates:
                 self.tr(u'&Check Coordinates'),
                 action)
             self.iface.removeToolBarIcon(action)
-
-    def check_coordinates(self):
+    
+    def load_and_convert_crs_database(self):
         #connect to database and select all extents
         con = sqlite3.connect(QgsApplication.srsDatabaseFilePath())
         cur = con.cursor()
         cur.execute('select * from tbl_bounds')
         rows = cur.fetchall()
-        #get values given by user
-        user_x = float(self.dlg.lineEdit.text())
-        user_y = float(self.dlg.lineEdit_2.text())
         for crs in rows:
             srid = crs[0]
             min_x = crs[1]
@@ -201,7 +198,7 @@ class CheckCoordinates:
             if (isinstance(min_x, float) and isinstance(min_y, float) and isinstance(max_x, float) and isinstance(max_y, float)):
                 extent = QgsRectangle(min_x, min_y, max_x, max_y)
                 #get name and id of crs
-                cur.execute(f"select description, auth_name, auth_id, parameters from tbl_srs where srid = '{srid}'")
+                cur.execute(f"select description, auth_name, auth_id from tbl_srs where srid = '{srid}'")
                 name_row = cur.fetchall()
                 if len(name_row)==1:
                     name = name_row[0][0]
@@ -213,13 +210,26 @@ class CheckCoordinates:
                             transform = QgsCoordinateTransform(QgsCoordinateReferenceSystem("EPSG:4326"), QgsCoordinateReferenceSystem(f"{symbol}:{symbol_id}"), QgsProject.instance())
                             transform.setBallparkTransformsAreAppropriate(True)
                             converted_extent = transform.transformBoundingBox(extent)
+                            #create and add converted system to list
+                            cs = CoordinateSystem(name, symbol, symbol_id, converted_extent)
+                            self.extent_list.append(cs)
                             #self.dlg.textEdit.append(f"{symbol}{symbol_id}, x<{converted_extent.xMinimum()}~{converted_extent.xMaximum()}>, y<{converted_extent.yMinimum()}~{converted_extent.yMaximum()}> {min_x} {max_x}, {min_y} {max_y}")
-                            if(((user_x >= converted_extent.xMinimum()) and (user_x <= converted_extent.xMaximum())) and ((user_y >= converted_extent.yMinimum()) and (user_y <= converted_extent.yMaximum()))):
-                                self.dlg.textEdit.append(f"{name}  ({symbol}:{symbol_id})")
                         except Exception:
                             pass
         cur.close()
         con.close()
+
+
+
+    def check_coordinates(self):
+        self.dlg.textEdit.clear()
+        #get values given by user
+        user_x = float(self.dlg.lineEdit.text())
+        user_y = float(self.dlg.lineEdit_2.text())
+        for crs in self.extent_list:
+            if(((user_x >= crs.extent.xMinimum()) and (user_x <= crs.extent.xMaximum())) and ((user_y >= crs.extent.yMinimum()) and (user_y <= crs.extent.yMaximum()))):
+                self.dlg.textEdit.append(f"{crs.name}  ({crs.symbol}:{crs.symbol_id})")
+       
 
 
 
@@ -232,6 +242,8 @@ class CheckCoordinates:
             self.first_start = False
             self.dlg = CheckCoordinatesDialog()
             self.dlg.pushButton.clicked.connect(self.check_coordinates)
+            self.load_and_convert_crs_database()
+
 
 
         # show the dialog
@@ -244,3 +256,12 @@ class CheckCoordinates:
             # substitute with your code.
 
             pass
+
+
+
+class CoordinateSystem:
+    def __init__(self, name, symbol, symbol_id, extent):
+        self.name = name
+        self.symbol = symbol
+        self.symbol_id = symbol_id
+        self.extent = extent
