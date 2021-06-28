@@ -224,11 +224,16 @@ class CheckCoordinates:
     def check_coordinates(self):
         self.dlg.textEdit.clear()
         #get values given by user
-        user_x = float(self.dlg.lineEdit.text())
-        user_y = float(self.dlg.lineEdit_2.text())
-        for crs in self.extent_list:
-            if(((user_x >= crs.extent.xMinimum()) and (user_x <= crs.extent.xMaximum())) and ((user_y >= crs.extent.yMinimum()) and (user_y <= crs.extent.yMaximum()))):
-                self.dlg.textEdit.append(f"{crs.name}  ({crs.symbol}:{crs.symbol_id})")
+        if not(self.dlg.lineEdit.text().upper().isupper() or self.dlg.lineEdit_2.text().upper().isupper()):
+            user_x = float(self.dlg.lineEdit.text())
+            user_y = float(self.dlg.lineEdit_2.text())
+            for crs in self.extent_list:
+                #print crs if user input values are inside bounds
+                if(((user_x >= crs.extent.xMinimum()) and (user_x <= crs.extent.xMaximum())) and ((user_y >= crs.extent.yMinimum()) and (user_y <= crs.extent.yMaximum()))):
+                    self.dlg.textEdit.append(f"{crs.name}  ({crs.symbol}:{crs.symbol_id})")
+        else:
+            self.dlg.textEdit.append("Incorrect X or Y")
+            
        
 
 
