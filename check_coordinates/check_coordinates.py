@@ -24,12 +24,16 @@
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
+import sqlite3
+from qgis.core import QgsProject, QgsApplication, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsRectangle
+
 
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
 from .check_coordinates_dialog import CheckCoordinatesDialog
 import os.path
+
 
 
 class CheckCoordinates:
@@ -179,15 +183,56 @@ class CheckCoordinates:
                 action)
             self.iface.removeToolBarIcon(action)
 
+    def check_coordinates(self):
+        #connect to database and select all extents
+        con = sqlite3.connect(QgsApplication.srsDatabaseFilePath())
+        cur = con.cursor()
+        cur.execute('select * from tbl_bounds')
+        rows = cur.fetchall()
+        #get values given by user
+        user_x = float(self.dlg.lineEdit.text())
+        user_y = float(self.dlg.lineEdit_2.text())
+        for crs in rows:
+            srid = crs[0]
+            min_x = crs[1]
+            min_y = crs[4]
+            max_x = crs[3]
+            max_y = crs[2]
+            if (isinstance(min_x, float) and isinstance(min_y, float) and isinstance(max_x, float) and isinstance(max_y, float)):
+                extent = QgsRectangle(min_x, min_y, max_x, max_y)
+                #get name and id of crs
+                cur.execute(f"select description, auth_name, auth_id, parameters from tbl_srs where srid = '{srid}'")
+                name_row = cur.fetchall()
+                if len(name_row)==1:
+                    name = name_row[0][0]
+                    symbol = name_row[0][1]
+                    symbol_id = name_row[0][2]
+                    if not(symbol_id.upper().isupper()):
+                        try:
+                            #convert extent from wgs84 to currently used crs
+                            transform = QgsCoordinateTransform(QgsCoordinateReferenceSystem("EPSG:4326"), QgsCoordinateReferenceSystem(f"{symbol}:{symbol_id}"), QgsProject.instance())
+                            transform.setBallparkTransformsAreAppropriate(True)
+                            converted_extent = transform.transformBoundingBox(extent)
+                            #self.dlg.textEdit.append(f"{symbol}{symbol_id}, x<{converted_extent.xMinimum()}~{converted_extent.xMaximum()}>, y<{converted_extent.yMinimum()}~{converted_extent.yMaximum()}> {min_x} {max_x}, {min_y} {max_y}")
+                            if(((user_x >= converted_extent.xMinimum()) and (user_x <= converted_extent.xMaximum())) and ((user_y >= converted_extent.yMinimum()) and (user_y <= converted_extent.yMaximum()))):
+                                self.dlg.textEdit.append(f"{name}  ({symbol}:{symbol_id})")
+                        except Exception:
+                            pass
+        cur.close()
+        con.close()
+
+
 
     def run(self):
         """Run method that performs all the real work"""
-
+        
         # Create the dialog with elements (after translation) and keep reference
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
         if self.first_start == True:
             self.first_start = False
             self.dlg = CheckCoordinatesDialog()
+            self.dlg.pushButton.clicked.connect(self.check_coordinates)
+
 
         # show the dialog
         self.dlg.show()
@@ -197,4 +242,5 @@ class CheckCoordinates:
         if result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
+
             pass
